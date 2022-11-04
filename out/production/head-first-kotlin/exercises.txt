@@ -1,0 +1,25 @@
+1.
+Declare a variable and give it val 9
+prints the line "Hello" plus a new line char
+prints the line "My cat is called " and the name of the cat
+prints the line "My cat is XX inches tall " where XX is the height of the cal
+Declare a variable a and give it val 6
+Declare a variable b and give it val 7
+Declare a variable c, compute a+b+10 = 23 and assigns c the value 23
+Declare a variable str, does c.tostring()  and give c val "23"
+Declare a variable numList initias it wih an array with values 1,2 and 3
+Declare a variable x and give it val 0
+while x is less than 3:
+  prints the line item 0 is 1
+  then sets x to the value of 1
+  prints the line item 1 is 2
+  then sets x to the value of 2
+  prints the line item 3 is 3
+  then sets x to the value of 3
+creates a variable myCat and assigns it to an insteanca of type Cat, with constructor params
+"Misty" and height 9
+creates a var y and, subtracts 9 - 3, and assigns 6 to y
+calls instance method myCat.play()
+calculates 6 +1, assigns y the value of 7
+calls instance method myCat.play()
+calculates 7 +1, assigns y the value of 8

@@ -1,0 +1,5 @@
+/.idea/codeStyles/codeStyleConfig.xml
+/out/production/head-first-kotlin/DrumKit.class
+*.class
+*.xml
+*.iml
