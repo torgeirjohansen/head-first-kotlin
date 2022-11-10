@@ -68,6 +68,22 @@ fun main(args: Array<String>) {
     val (title, isVeg) = r1
     println("title = $title, and isVeg = $isVeg")
 
+    //  Chapter 8 nullable types
+    var nullable  = null
+//    nullable = "not-possible"
+    var stringNullable : String? = null
+
+    println("Elvis operator returned: ${stringNullable?.length ?: -1}")
+    getSomeString()?.let {
+        stringNullable = it
+    }
+
+    println("getSomeString returned $stringNullable")
+
+}
+
+fun getSomeString(): String? {
+    return "someString";
 }
 
 fun getUserChoice(options: Array<String>): String {
