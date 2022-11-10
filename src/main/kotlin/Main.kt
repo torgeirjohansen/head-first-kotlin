@@ -73,13 +73,12 @@ fun main(args: Array<String>) {
 //    nullable = "not-possible"
     var stringNullable : String? = null
 
-    println("Elvis operator returned: ${stringNullable?.length ?: -1}")
-    getSomeString()?.let {
+    println("Elvis operator (stringNullable?.length ?: -1) returned: ${stringNullable?.length ?: -1}")
+     getSomeString()?.let {
         stringNullable = it
     }
-
-    println("getSomeString returned $stringNullable")
-
+    println("Elvis operator (stringNullable?.length ?: -1) returned: ${stringNullable?.length ?: -1}")
+    // Use a safe cast (as?) to avoid getting a ClassCastException.
 }
 
 fun getSomeString(): String? {
