@@ -79,6 +79,8 @@ fun main(args: Array<String>) {
     }
     println("Elvis operator (stringNullable?.length ?: -1) returned: ${stringNullable?.length ?: -1}")
     // Use a safe cast (as?) to avoid getting a ClassCastException.
+
+    // Chapter 9
 }
 
 fun getSomeString(): String? {
