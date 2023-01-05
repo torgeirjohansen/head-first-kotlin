@@ -1,2 +1,2 @@
-class Cat {
+class Cat(name: String) : Pet(name) {
 }

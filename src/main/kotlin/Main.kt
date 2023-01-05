@@ -81,6 +81,95 @@ fun main(args: Array<String>) {
     // Use a safe cast (as?) to avoid getting a ClassCastException.
 
     // Chapter 9
+    var a: MutableList<String> = mutableListOf()
+    a.add("Zero")
+    a.add("Two")
+    a.add(2, "Four")
+    a.add(3, "Six")
+    println(a)
+
+
+    if (a.contains("Zero")) a.add("Eight")
+    a.removeAt(0)
+    println(a)
+
+    if (a.indexOf("Four") != 4) a.add("Ten")
+    println(a)
+
+    if ( a.contains("Zero")) a.add("Twelve")
+    println(a)
+
+    // Sets: not allowed to add duplicates:
+    // As you learned in Chapter 7, the === operator checks whether two references
+    // point to the same object, and the == operator checks whether the references
+    // point to objects that should be considered equal
+    // A Set, however, only uses these operators once it’s established that the two objects have matching hash code values.
+    // This means that in order for a Set to work properly, equal objects must have matching hash codes
+
+    val pets1 = listOf("cat", "dog", "fish", "fish")
+    val pets2 = listOf("cat", "owl")
+    val pets3 = listOf("dog", "dove", "dog", "dove")
+    val pets4 = listOf("hedgehog")
+
+    val setOfPets = pets1.toMutableSet()
+    setOfPets.addAll(pets2)
+    setOfPets.addAll(pets3)
+    setOfPets.addAll(pets4)
+    println("Number of pets are: " +setOfPets.size)
+
+    val pets = pets1.toMutableList()
+    pets.addAll(pets2)
+    pets.addAll(pets3)
+    pets.addAll(pets4)
+    println("all pets. " + pets)
+
+    println("total number of pets: " + pets.size)
+
+    println("all pets sorted. " + pets.sort())
+
+    // Chapter 10 generics
+    val catFuzz = Cat("Cat Fuzz")
+    val catKatsu = Cat("Katsu")
+    val fishFinny = Fish("Finny")
+    val catOwner = PetOwner(catFuzz)
+    catOwner.add(catKatsu)
+
+    //    When we prefix a generic type with out, we say that the generic type is covariant.
+    //    In other words, it means that a subtype can be used in place of a supertype.
+
+    // If a generic type is contravariant, it means that you can use a supertype in place of a subtype.
+    // This is the opposite of covariance.
+    // When we prefix a generic type with in, we say that the generic type is contravariant.
+    // In other words, it means that a supertype can be used in place of a subtype
+
+    // Chapter 11 Lambdas
+    // If the final parameter of a function you want to call is a lambda,
+    // as is the case with our convert function, you can move the lambda argument outside the function call’s parentheses.
+    Lambdas().convert(20.0) { c -> c * 1.8 + 32 }
+
+    val options = arrayOf("Red", "Amber", "Green")
+    var crossWalk = options[(Math.random() * options.size).toInt()]
+    println("crossWalk = $crossWalk")
+    if (crossWalk == "Green") {
+        println("walk!")
+    }
+    Lambdas.unless (crossWalk == "Green") {
+        println("Stop")
+    }
+
+    val groceries = listOf(
+        Grocery("Tomatoes", "Vegetable", "lb", 3.0),
+        Grocery("Mushrooms", "Vegetable", "lb", 4.0),
+        Grocery("Bagels", "Bakery", "Pack", 1.5),
+        Grocery("Olive oil", "Pantry", "Bottle", 6.0),
+        Grocery("Ice cream", "Frozen", "Pack", 3.0),
+    )
+    println("Expensive ingredients:")
+    Lambdas.search(groceries) { i : Grocery -> i.unitPrice > 5.0}
+    println("All vegetables:")
+    Lambdas.search(groceries) { i : Grocery -> i.category == "Vegetable"}
+    println("All packs:")
+    Lambdas.search(groceries) { i : Grocery -> i.unit == "Pack"}
 }
 
 fun getSomeString(): String? {
