@@ -12,7 +12,7 @@ class BeatsTest {
     }
 
     @Test
-    fun `should play beast in parallel`() {
+    fun `should play beats in parallel`() {
         val beats = Beats()
         runBlocking {
             launch { beats.playBeatsWithSuspend("x-x-x-x-x-x-", TOM_FILE) }

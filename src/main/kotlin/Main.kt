@@ -10,13 +10,15 @@ fun main(args: Array<String>) {
         "Sigurd" to arrayOf(1, 2, 3, 5, 6),
         "Arild" to arrayOf(36, 37, 38, 39, 40),
         "Johan" to arrayOf(21, 27),
-        "Kristine" to arrayOf(19, 22, 30)
+        "Kristine" to arrayOf(19, 22, 30),
+        "Svein-Erik" to arrayOf(7, 9, 10, 11),
+        "Jørn" to arrayOf(23, 24, 25, 25)
     );
 
     val allNumbers = playersWithNumbers.flatMap { it.value.asList() }
     println("Alle solgte lodd: " + allNumbers);
 
-    print("Velger vinner ")
+    print("Velger vinnerlodd ")
     repeat(10) {
         print(".")
         Thread.sleep(250);
@@ -27,7 +29,13 @@ fun main(args: Array<String>) {
     println("Vinner lodd er: $winnerNumber");
 
     val winner = playersWithNumbers.filter { it.value.contains(winnerNumber) }.keys.first()
-    println("Vinneren er .... $winner !!");
+
+    print("Vinneren er ....");
+    repeat(5) {
+        print(".")
+        Thread.sleep(250);
+    }
+    println("$winner !!");
 
 
 
