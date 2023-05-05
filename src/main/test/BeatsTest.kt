@@ -1,8 +1,18 @@
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance.Lifecycle
 import java.lang.StringBuilder
-import kotlin.random.Random
+import java.util.concurrent.Executors
 
 class BeatsTest {
 
@@ -22,11 +32,29 @@ class BeatsTest {
         }
     }
 
+
+    @Test
+    fun `should play beats in parallel in without blocking scope`() {
+        println("Main thread: ${Thread.currentThread().name}")
+        val beats = Beats()
+        val job = GlobalScope.launch { beats.playBeatsWithSuspend("x-x-x-x-x-x-", TOM_FILE) }
+
+        // Really, REALLY fire and forget
+        job.start()
+        Thread.sleep(2000)
+    }
+
     @Test
     fun `should play several beats in parallel`() {
+        val context = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
         val beats = Beats()
+        // We can execute as many blocking operations as we want.
+        // Under the hood, those operations will be handled by a fixed number of threads without
+        // excessive thread creation
+
+        // runBlocking{} also starts a new coroutine but blocks the current thread: main for the
+        // duration of the call until all the code inside the runBlocking{} function body complete their execution.
         runBlocking {
-            launch { beats.playBeatsWithSuspend("x---x-x-x-x-x-x---x-x-x-x-x-x-x---x-x-x-x-x-x-x-", KICK_DRUM) }
             launch { beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE) }
             launch { beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE) }
             launch { beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE) }
@@ -45,6 +73,31 @@ class BeatsTest {
             launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(60), CYMBAL_FILE) }
             launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(60), FLOOR_TOM_FILE) }
             launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(60), TOM_FILE) }
+        }
+    }
+
+    @Test
+    fun `should stop kick drum when drummer leg is stopped`() {
+        val beats = Beats()
+        // If we are not interested in the result from the (long running) async computation anymore
+        // we can cancel it using `cancel()`
+        var leg: Job
+        runBlocking {
+            leg = launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(60), KICK_DRUM) }
+            launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(60), SNARE) }
+            delay(2000)
+            leg.cancel()
+        }
+    }
+
+    @Test
+    fun `should stop music when timeout expires`() {
+        val beats = Beats()
+        runBlocking {
+            withTimeout(5000) {
+                launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(600), KICK_DRUM) }
+                launch { beats.playBeatsWithSuspend(beats.makeBeatOfLength(600), SNARE) }
+            }
         }
     }
 

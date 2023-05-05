@@ -20,6 +20,7 @@ class Beats {
     }
 
     suspend fun playBeatsWithSuspend(beats: String, file: String) {
+        println("Playing using thread ${Thread.currentThread().name}")
         val parts = beats.split("x")
         var count = 0
         for (part in parts) {
@@ -40,7 +41,7 @@ class Beats {
 
     fun playSound(file: String) {
         val clip = AudioSystem.getClip()
-        val audioInputStream= AudioSystem.getAudioInputStream(File(file))
+        val audioInputStream = AudioSystem.getAudioInputStream(File(file))
         clip.open(audioInputStream)
         clip.start()
     }
