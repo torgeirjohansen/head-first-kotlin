@@ -1,17 +1,11 @@
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance.Lifecycle
-import java.lang.StringBuilder
 import java.util.concurrent.Executors
 
 class BeatsTest {
@@ -46,7 +40,6 @@ class BeatsTest {
 
     @Test
     fun `should play several beats in parallel`() {
-        val context = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
         val beats = Beats()
         // We can execute as many blocking operations as we want.
         // Under the hood, those operations will be handled by a fixed number of threads without
@@ -56,7 +49,46 @@ class BeatsTest {
         // duration of the call until all the code inside the runBlocking{} function body complete their execution.
         runBlocking {
             launch { beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE) }
-            launch { beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE) }
+            launch { beats.playBeatsWithSuspend("x---x---x---x---x---x---x---x---x---x---x---x-", HIGH_HAT) }
+            launch { beats.playBeatsWithSuspend("-x-------x-------x-------x-------x-------x---", CYMBAL_FILE) }
+        }
+    }
+
+    @Test
+    fun `should play several beats in parallel using custom dispatcher with 1 thread`() {
+        val beats = Beats()
+        runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
+            launch { extracted(beats) }
+            launch { beats.playBeatsWithSuspend("x---x---x---x---x---x---x---x---x---x---x---x-", HIGH_HAT) }
+            launch { beats.playBeatsWithSuspend("-x-------x-------x-------x-------x-------x---", CYMBAL_FILE) }
+        }
+    }
+
+    // Under the hood, suspend functions are converted by the compiler to another function without the suspend keyword,
+    // that takes an addition parameter of type Continuation<T>. The function here for example, will be converted by the compiler to this
+    // (Taken from decompiling the kotlin bytecode to Java: )
+    // ```   private final Object extracted(Beats beats, Continuation $completion) {```
+    // Continuation<T> is an interface that contains two functions that are invoked to resume the coroutine with a return value or with an
+    // exception if an error had occurred while the function was suspended.
+    private suspend fun extracted(beats: Beats) {
+        beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE)
+    }
+
+    /**Coroutines allow multitasking without multithreading, but they don't disallow multithreading.
+     *
+     * In languages that support both, a coroutine that is put to sleep can be re-awakened in a different thread.
+     * The usual arrangement for CPU-bound tasks is to have a thread pool with about twice as many threads as you have CPU cores.
+     * This thread pool is then used to execute maybe thousands of coroutines simultaneously. The threads share a queue
+     * of coroutines ready to execute, and whenever a thread's current coroutine blocks, it just gets another one to work on from the queue.
+     *
+     * In this situation you have enough busy threads to keep your CPU busy, and you still have thread context switches,
+     * but not enough of them to waste significant resources. The number of coroutine context switches is thousands of times higher.
+     *
+     * */
+    @Test
+    fun `should play several beats in parallel using custom dispatcher with several threads`() {
+        val beats = Beats()
+        runBlocking(Executors.newFixedThreadPool(4).asCoroutineDispatcher()) {
             launch { beats.playBeatsWithSuspend("----x-------x-------x-------x-------x-------", SNARE) }
             launch { beats.playBeatsWithSuspend("x---x---x---x---x---x---x---x---x---x---x---x-", HIGH_HAT) }
             launch { beats.playBeatsWithSuspend("-x-------x-------x-------x-------x-------x---", CYMBAL_FILE) }
