@@ -1,8 +1,11 @@
 import kotlinx.coroutines.*
 
 const val TOM_FILE = "src/main/kotlin/audio/toms.aiff"
-
 const val CYMBAL_FILE = "src/main/kotlin/audio/crash_cymbal.aiff"
+const val FLOOR_TOM_FILE = "src/main/kotlin/audio/floor_toms.aiff"
+const val HIGH_HAT = "src/main/kotlin/audio/high_hat.aiff"
+const val KICK_DRUM = "src/main/kotlin/audio/kick_drum.aiff"
+const val SNARE = "src/main/kotlin/audio/snare.aiff"
 
 fun main(args: Array<String>) {
     val playersWithNumbers = mapOf(

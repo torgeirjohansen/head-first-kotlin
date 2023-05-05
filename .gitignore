@@ -4,3 +4,4 @@
 *.xml
 *.iml
 *.kotlin_module
+*.ws.kts
