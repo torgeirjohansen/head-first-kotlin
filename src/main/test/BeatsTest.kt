@@ -71,23 +71,24 @@ class BeatsTest {
     fun `should play beats in parallel in without blocking scope`() {
         println("Main thread: ${Thread.currentThread().name}")
         val beats = Beats()
-        val tomJob = GlobalScope.launch { beats.playBeatsWithSuspend("x-x-x-x-x-x-", TOM_FILE) }
+        val tomJob = GlobalScope.async { beats.playBeatsWithSuspend("x-x-x-x-x-x-", TOM_FILE) }
         val cymbalJob = GlobalScope.launch { beats.playBeatsWithSuspend("x-----x----", CYMBAL_FILE) }
 
         // Really, REALLY fire and forget, think of them as daemon threads.
         tomJob.start()
-        cymbalJob.start()
+        tomJob.cancel()
+//        cymbalJob.start()
+
+        Thread.sleep(2000)
     }
 
     @Test
     fun `should play beats in parallel in without blocking scope with sleep `() {
         println("Main thread: ${Thread.currentThread().name}")
         val beats = Beats()
-        val tomJob = GlobalScope.async { beats.playBeatsWithSuspend("x-x-x-x-x-x-", TOM_FILE) }
-        val cymbalJob = GlobalScope.launch { beats.playBeatsWithSuspend("x-----x----", CYMBAL_FILE) }
+        GlobalScope.launch { beats.playBeatsWithSuspend("x-x-x-----x-x-x---------x---x---x----x---x", TOM_FILE) }
+        GlobalScope.launch { beats.playBeatsWithSuspend("x-----x----xx--x---x---x-----x----x---x", CYMBAL_FILE) }
 
-        tomJob.start()
-        cymbalJob.start()
         Thread.sleep(2000)
     }
 
@@ -132,12 +133,17 @@ class BeatsTest {
     /**Coroutines allow multitasking without multithreading, but they don't disallow multithreading.
      *
      * In languages that support both, a coroutine that is put to sleep can be re-awakened in a different thread.
-     * The usual arrangement for CPU-bound tasks is to have a thread pool with about twice as many threads as you have CPU cores.
-     * This thread pool is then used to execute maybe thousands of coroutines simultaneously. The threads share a queue
-     * of coroutines ready to execute, and whenever a thread's current coroutine blocks, it just gets another one to work on from the queue.
+     * The usual arrangement for CPU-bound tasks is to have a thread pool with about twice as many threads
+     * as you have CPU cores.
+     * This thread pool is then used to execute maybe thousands of coroutines simultaneously. The threads share a
+     * queue
+     * of coroutines ready to execute, and whenever a thread's current coroutine blocks, it just gets another one
+     * to work on from the queue.
      *
-     * In this situation you have enough busy threads to keep your CPU busy, and you still have thread context switches,
-     * but not enough of them to waste significant resources. The number of coroutine context switches is thousands of times higher.
+     * In this situation you have enough busy threads to keep your CPU busy, and you still have thread context
+     * switches,
+     * but not enough of them to waste significant resources. The number of coroutine context switches is thousands
+     * of times higher.
      *
      * */
     @Test

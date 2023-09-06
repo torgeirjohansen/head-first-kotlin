@@ -9,40 +9,6 @@ const val KICK_DRUM = "src/main/kotlin/audio/kick_drum.aiff"
 const val SNARE = "src/main/kotlin/audio/snare.aiff"
 
 fun main(args: Array<String>) {
-    val playersWithNumbers = mapOf(
-        "Torgeir" to arrayOf(4, 8, 13, 14, 15),
-        "Sigurd" to arrayOf(1, 2, 3, 5, 6),
-        "Arild" to arrayOf(36, 37, 38, 39, 40),
-        "Johan" to arrayOf(21, 27),
-        "Kristine" to arrayOf(19, 22, 30),
-        "Svein-Erik" to arrayOf(7, 9, 10, 11),
-        "Jørn" to arrayOf(23, 24, 25, 25)
-    );
-
-    val allNumbers = playersWithNumbers.flatMap { it.value.asList() }
-    println("Alle solgte lodd: " + allNumbers);
-
-    print("Velger vinnerlodd ")
-    repeat(10) {
-        print(".")
-        Thread.sleep(250);
-    }
-    println(".");
-
-    val winnerNumber = allNumbers.random();
-    println("Vinner lodd er: $winnerNumber");
-
-    val winner = playersWithNumbers.filter { it.value.contains(winnerNumber) }.keys.first()
-
-    print("Vinneren er ....");
-    repeat(5) {
-        print(".")
-        Thread.sleep(250);
-    }
-    println("$winner !!");
-
-
-
     if (false) {
         val fruit = arrayOf("Apple", "Banana", "Cherry", "Blueberry", "Pomegranate")
         val index = arrayOf(1, 3, 4, 2)
@@ -251,26 +217,13 @@ fun main(args: Array<String>) {
 
         // run in sequence
         val beats = Beats()
-//    beats.playBeats("x-x-x-x-x-x-", "src/main/kotlin/audio/toms.aiff")
-//    beats.playBeats("x-----x----", "src/main/kotlin/audio/crash_cymbal.aiff")
-
-        // run using coroutines
-        // Starting a thread and keeping it running is quite expensive in terms of performance.
-        // The processor can usually only run a limited number of threads at the same time, and its more efficient to run as few threads as possible.
-        // Coroutines, on the other hand, run on a shared pool of threads by default, and the same thread can run many coroutines.
-
-        // If you want your code to run in the same thread but in separate coroutines, you can use the runBlocking function.
-        // This is a higher-order function which blocks the current thread until the code that’s passed to it finishes running.
-//    runBlocking{
-//        launch { beats.playBeats("x-x-x-x-x-x-", "src/main/kotlin/audio/toms.aiff") }
-//        beats.playBeats("x-----x----", "src/main/kotlin/audio/crash_cymbal.aiff")
-//    }
 
         runBlocking {
             launch { beats.playBeatsWithSuspend("x-x-x-x-x-x-", TOM_FILE) }
             beats.playBeatsWithSuspend("x-----x----", CYMBAL_FILE)
         }
     }
+    
 
 }
 
